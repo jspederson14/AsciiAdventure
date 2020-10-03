@@ -88,4 +88,8 @@ namespace asciiadventure {
             return true;
         }
     }
+
+    class Sword : GameObject{
+        public Sword(int row, int col, Screen screen) : base(row, col, "!",screen){}    
+        }
 }

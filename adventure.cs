@@ -45,6 +45,9 @@ namespace asciiadventure {
             // add a treasure
             Treasure treasure = new Treasure(6, 2, screen);
 
+            // add a sword
+            Sword sword = new Sword(8,7,screen);
+
             // add some mobs
             List<Mob> mobs = new List<Mob>();
             mobs.Add(new Mob(9, 9, screen));
@@ -96,9 +99,15 @@ namespace asciiadventure {
                     
                     if (screen[mob.Row + deltaRow, mob.Col + deltaCol] is Player){
                         // the mob got the player!
-                        mob.Token = "*";
-                        message += "A MOB GOT YOU! GAME OVER\n";
-                        gameOver = true;
+                        if(!player.Armed){
+                            mob.Token = "*";
+                            message += "A MOB GOT YOU! GAME OVER\n";
+                            gameOver = true;
+                        }
+                        else{
+                            message += "TIME TO FIGHT!\n";
+                            gameOver = true;
+                        }
                     }
                     mob.Move(deltaRow, deltaCol);
                 }
