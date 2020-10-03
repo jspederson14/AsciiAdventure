@@ -20,7 +20,9 @@ namespace asciiadventure {
         private static string Menu() {
             return "WASD to move\nIJKL to attack/interact\nEnter command: ";
         }
-
+        private static string FightMenu() {
+            return "You are in a fight\npress 1 to attack\npress 2 to defend";
+        }
         private static void PrintScreen(Screen screen, string message, string menu) {
             Console.Clear();
             Console.WriteLine(screen);
@@ -38,7 +40,7 @@ namespace asciiadventure {
             for (int i=0; i < 4; i++){
                 new Wall(3 + i, 4, screen);
             }
-            
+
             // add a player
             Player player = new Player(0, 0, screen, "Zelda");
             
@@ -56,7 +58,8 @@ namespace asciiadventure {
             PrintScreen(screen, "Welcome!", Menu());
             
             Boolean gameOver = false;
-            
+            Boolean fightGame = false;
+
             while (!gameOver) {
                 char input = Console.ReadKey(true).KeyChar;
 
@@ -107,12 +110,34 @@ namespace asciiadventure {
                         else{
                             message += "TIME TO FIGHT!\n";
                             gameOver = true;
+                            fightGame = true;
                         }
                     }
                     mob.Move(deltaRow, deltaCol);
                 }
 
                 PrintScreen(screen, message, Menu());
+            }
+            //enters combat screen
+            while(fightGame){
+                string fightUpdate;
+                bool playerAttack;
+                bool mobAttack;
+                char input = Console.ReadKey(true).KeyChar;
+                //figures out what move player wants to make
+                if (Eq(input, '1')) {
+                    playerAttack = true;
+                }else if (Eq(input, '2')) {
+                    playerAttack = false;
+                }
+                //randomly chooses mobs move
+                if(random.Next(2)==1)
+                    mobAttack = true;
+                else
+                    mobAttack = false;
+                
+
+                PrintScreen(screen, fightUpdate, FightMenu());
             }
         }
 
