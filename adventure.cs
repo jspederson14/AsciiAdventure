@@ -54,6 +54,7 @@ namespace asciiadventure {
             
             Boolean gameOver = false;
             
+            Boolean light = false;
             while (!gameOver) {
                 char input = Console.ReadKey(true).KeyChar;
 
@@ -80,7 +81,9 @@ namespace asciiadventure {
                 } else if (Eq(input, 'v')) {
                     // TODO: handle inventory
                     message = "You have nothing\n";
-                } else {
+                }else if (Eq(input, 't')) {
+                    light = true;
+                }else {
                     message = $"Unknown command: {input}";
                 }
 
@@ -91,16 +94,14 @@ namespace asciiadventure {
                     if (moves.Count == 0){
                         continue;
                     }
-                    // mobs move randomly
-                    var (deltaRow, deltaCol) = moves[random.Next(moves.Count)];
-                    
+                    int [] move = mob.moveTo(player.Row, Player.Col, light, moves);
                     if (screen[mob.Row + deltaRow, mob.Col + deltaCol] is Player){
                         // the mob got the player!
                         mob.Token = "*";
                         message += "A MOB GOT YOU! GAME OVER\n";
                         gameOver = true;
                     }
-                    mob.Move(deltaRow, deltaCol);
+                    mob.Move(move[0], move[1]);
                 }
 
                 PrintScreen(screen, message, Menu());
