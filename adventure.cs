@@ -56,6 +56,8 @@ namespace asciiadventure {
             
             Boolean gameOver = false;
 
+            Boolean hasTreasure = false;
+
             while (!gameOver) {
                 char input = Console.ReadKey(true).KeyChar;
 
@@ -96,6 +98,8 @@ namespace asciiadventure {
                 } else {
                     message = $"Unknown command: {input}";
                 }
+                if(message.Equals("Yay, we got the treasure!\n"))
+                    hasTreasure = true;
                 // OK, now move the mobs
                 foreach (Mob mob in mobs){
                     // TODO: Make mobs smarter, so they jump on the player, if it's possible to do so
@@ -113,10 +117,15 @@ namespace asciiadventure {
                         // mobs move randomly
                         var (deltaRow, deltaCol) = moves[random.Next(moves.Count)];
                         if (screen[mob.Row + deltaRow, mob.Col + deltaCol] is Player){
-                            // the mob got the player!
-                            mob.Token = "*";
-                            message += "A MOB GOT YOU! GAME OVER\n";
-                            gameOver = true;
+                            if(!hasTreasure){
+                                mob.Token = "*";
+                                message += "A MOB GOT YOU! GAME OVER\n";
+                                gameOver = true;
+                            }
+                            else{
+                                message += "You used the treasure to revive yourself\n";
+                                hasTreasure = false;
+                            }
                         }
                     mob.Move(deltaRow, deltaCol);
                     }
