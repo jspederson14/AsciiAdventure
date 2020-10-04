@@ -84,9 +84,6 @@ namespace asciiadventure {
     class Treasure : GameObject {
         public Treasure(int row, int col, Screen screen) : base(row, col, "T", screen) {}
 
-        public override Boolean IsPassable() {
-            return true;
-        }
     }
 
     class Sword : GameObject{

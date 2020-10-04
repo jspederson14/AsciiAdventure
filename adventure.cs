@@ -61,6 +61,9 @@ namespace asciiadventure {
 
                 String message = "";
 
+                int? actionRow = null;
+                int? actionCol = null;
+
                 if (Eq(input, 'q')) {
                     break;
                 } else if (Eq(input, 'w')) {
@@ -73,37 +76,50 @@ namespace asciiadventure {
                     player.Move(0, 1);
                 } else if (Eq(input, 'i')) {
                     message += player.Action(-1, 0) + "\n";
+                    actionRow = player.Row-1;
+                    actionCol = player.Col;
                 } else if (Eq(input, 'k')) {
                     message += player.Action(1, 0) + "\n";
+                    actionRow = player.Row+1;
+                    actionCol = player.Col;
                 } else if (Eq(input, 'j')) {
                     message += player.Action(0, -1) + "\n";
+                    actionRow = player.Row;
+                    actionCol = player.Col-1;
                 } else if (Eq(input, 'l')) {
                     message += player.Action(0, 1) + "\n";
+                    actionRow = player.Row;
+                    actionCol = player.Col+1;
                 } else if (Eq(input, 'v')) {
                     // TODO: handle inventory
                     message = "You have nothing\n";
                 } else {
                     message = $"Unknown command: {input}";
                 }
-                if(message.Equals("Yay, we got the treasure!\n"))
-                    gameOver = true;
                 // OK, now move the mobs
                 foreach (Mob mob in mobs){
                     // TODO: Make mobs smarter, so they jump on the player, if it's possible to do so
-                    List<Tuple<int, int>> moves = screen.GetLegalMoves(mob.Row, mob.Col);
-                    if (moves.Count == 0){
-                        continue;
+                    if((actionRow!= null)&&player.Armed){
+                        if((mob.Row==actionRow)&&(mob.Col==actionCol)){
+                            gameOver = true;
+                            mob.Token = "*";
+                        }
                     }
-                    // mobs move randomly
-                    var (deltaRow, deltaCol) = moves[random.Next(moves.Count)];
-                    
-                    if (screen[mob.Row + deltaRow, mob.Col + deltaCol] is Player){
-                        // the mob got the player!
-                        mob.Token = "*";
-                        message += "A MOB GOT YOU! GAME OVER\n";
-                        gameOver = true;
-                    }
+                    else{
+                        List<Tuple<int, int>> moves = screen.GetLegalMoves(mob.Row, mob.Col);
+                        if (moves.Count == 0){
+                            continue;
+                        }
+                        // mobs move randomly
+                        var (deltaRow, deltaCol) = moves[random.Next(moves.Count)];
+                        if (screen[mob.Row + deltaRow, mob.Col + deltaCol] is Player){
+                            // the mob got the player!
+                            mob.Token = "*";
+                            message += "A MOB GOT YOU! GAME OVER\n";
+                            gameOver = true;
+                        }
                     mob.Move(deltaRow, deltaCol);
+                    }
                 }
                 PrintScreen(screen, message, Menu());
             }
