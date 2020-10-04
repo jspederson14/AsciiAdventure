@@ -20,9 +20,6 @@ namespace asciiadventure {
         private static string Menu() {
             return "WASD to move\nIJKL to attack/interact\nEnter command: ";
         }
-        private static string FightMenu() {
-            return "You are in a fight\npress 1 to attack\npress 2 to defend";
-        }
         private static void PrintScreen(Screen screen, string message, string menu) {
             Console.Clear();
             Console.WriteLine(screen);
@@ -58,7 +55,6 @@ namespace asciiadventure {
             PrintScreen(screen, "Welcome!", Menu());
             
             Boolean gameOver = false;
-            Boolean fightGame = false;
 
             while (!gameOver) {
                 char input = Console.ReadKey(true).KeyChar;
@@ -89,7 +85,8 @@ namespace asciiadventure {
                 } else {
                     message = $"Unknown command: {input}";
                 }
-
+                if(message.Equals("Yay, we got the treasure!\n"))
+                    gameOver = true;
                 // OK, now move the mobs
                 foreach (Mob mob in mobs){
                     // TODO: Make mobs smarter, so they jump on the player, if it's possible to do so
@@ -102,42 +99,13 @@ namespace asciiadventure {
                     
                     if (screen[mob.Row + deltaRow, mob.Col + deltaCol] is Player){
                         // the mob got the player!
-                        if(!player.Armed){
-                            mob.Token = "*";
-                            message += "A MOB GOT YOU! GAME OVER\n";
-                            gameOver = true;
-                        }
-                        else{
-                            message += "TIME TO FIGHT!\n";
-                            gameOver = true;
-                            fightGame = true;
-                        }
+                        mob.Token = "*";
+                        message += "A MOB GOT YOU! GAME OVER\n";
+                        gameOver = true;
                     }
                     mob.Move(deltaRow, deltaCol);
                 }
-
                 PrintScreen(screen, message, Menu());
-            }
-            //enters combat screen
-            while(fightGame){
-                string fightUpdate;
-                bool playerAttack;
-                bool mobAttack;
-                char input = Console.ReadKey(true).KeyChar;
-                //figures out what move player wants to make
-                if (Eq(input, '1')) {
-                    playerAttack = true;
-                }else if (Eq(input, '2')) {
-                    playerAttack = false;
-                }
-                //randomly chooses mobs move
-                if(random.Next(2)==1)
-                    mobAttack = true;
-                else
-                    mobAttack = false;
-                
-
-                PrintScreen(screen, fightUpdate, FightMenu());
             }
         }
 

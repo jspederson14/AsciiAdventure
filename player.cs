@@ -38,6 +38,10 @@ namespace asciiadventure {
                 Armed = true; 
                 return "You found the sword";
             }
+            if((other is Mob)&&Armed){
+                other.Delete();
+                return "bonk";
+            }
             return "ouch";
         }
     }
